@@ -423,6 +423,45 @@ struct bchfs_handle bcache_fs_open(const char *path)
 	return ret;
 }
 
+void propagate_recurse(int dirfd)
+{
+	DIR *dir = fdopendir(dirfd);
+	struct dirent *d;
+
+	while ((errno = 0), (d = readdir(dir))) {
+		if (!strcmp(d->d_name, ".") ||
+		    !strcmp(d->d_name, ".."))
+			continue;
+
+		int ret = ioctl(dirfd, BCHFS_IOC_REINHERIT_ATTRS,
+			    d->d_name);
+		if (ret < 0) {
+			fprintf(stderr, "error propagating attributes to %s: %m\n",
+				d->d_name);
+			continue;
+		}
+
+		if (!ret) /* did no work */
+			continue;
+
+		struct stat st = xfstatat(dirfd, d->d_name,
+					  AT_SYMLINK_NOFOLLOW);
+		if (!S_ISDIR(st.st_mode))
+			continue;
+
+		int fd = openat(dirfd, d->d_name, O_RDONLY);
+		if (fd < 0) {
+			fprintf(stderr, "error opening %s: %m\n", d->d_name);
+			continue;
+		}
+		propagate_recurse(fd);
+		close(fd);
+	}
+
+	if (errno)
+		die("readdir error: %m");
+}
+
 /*
  * Given a path to a block device, open the filesystem it belongs to; also
  * return the device's idx:

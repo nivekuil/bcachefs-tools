@@ -94,6 +94,7 @@ struct bchfs_handle {
 };
 
 void bcache_fs_close(struct bchfs_handle);
+void propagate_recurse(int dirfd);
 struct bchfs_handle bcache_fs_open(const char *);
 struct bchfs_handle bchu_fs_open_by_dev(const char *, int *);
 int bchu_dev_path_to_idx(struct bchfs_handle, const char *);

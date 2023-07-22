@@ -2,6 +2,7 @@ pub mod key;
 pub mod logger;
 pub mod cmd_mount;
 pub mod cmd_list;
+pub mod cmd_attr;
 
 #[macro_export]
 macro_rules! c_str {

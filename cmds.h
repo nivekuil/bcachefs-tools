@@ -54,6 +54,8 @@ int cmd_version(int argc, char *argv[]);
 
 int cmd_setattr(int argc, char *argv[]);
 
+int cmd_attr(int argc, char *argv[]);
+
 int subvolume_usage(void);
 int cmd_subvolume_create(int argc, char *argv[]);
 int cmd_subvolume_delete(int argc, char *argv[]);

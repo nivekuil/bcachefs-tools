@@ -45,6 +45,7 @@ fn main() {
         })
         .allowlist_function(".*bch2_.*")
         .allowlist_function("bio_.*")
+        .allowlist_function("propagate_recurse")
         .allowlist_function("derive_passphrase")
         .allowlist_function("request_key")
         .allowlist_function("add_key")
